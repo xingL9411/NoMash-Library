@@ -3,7 +3,6 @@
 import 'bootstrap/dist/css/bootstrap.min.css'
 
 import { createApp } from 'vue'
-import { initializeApp } from 'firebase/app'
 import App from './App.vue'
 
 import PrimeVue from 'primevue/config'
