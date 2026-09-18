@@ -1,12 +1,30 @@
 <script setup>
+import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { isAuthenticated, logout } from '../auth'
+import { getAuth, onAuthStateChanged, signOut } from 'firebase/auth'
 
 const router = useRouter()
+const firebaseUser = ref(null)
+const firebaseAuth = getAuth()
+
+onAuthStateChanged(firebaseAuth, (user) => {
+  firebaseUser.value = user
+})
 
 const handleLogout = () => {
   logout()
   router.push('/login')
+}
+
+const handleFirebaseLogout = async () => {
+  try {
+    await signOut(firebaseAuth)
+    console.log('Firebase Sign out Successful!')
+    router.push('/FireLogin')
+  } catch (error) {
+    console.log(error.code)
+  }
 }
 </script>
 
@@ -29,6 +47,15 @@ const handleLogout = () => {
           <router-link to="/FireLogin" class="nav-link" active-class="active">
             Firebase Login
           </router-link>
+        </li>
+        <li v-if="firebaseUser" class="nav-item">
+          <button
+            type="button"
+            class="nav-link btn btn-link"
+            @click="handleFirebaseLogout"
+          >
+            Firebase Logout
+          </button>
         </li>
         <li v-if="!isAuthenticated" class="nav-item">
           <router-link to="/login" class="nav-link" exact-active-class="active">
